@@ -37,8 +37,10 @@ module.exports = function (grunt) {
       dest: path.join(BUILD_DIR, 'plugins', outFile),
       options: {
         debug:      DEV,
-        transform:  browserifyTransform,
-        standalone: name
+        browserifyOptions: {
+          transform:  browserifyTransform,
+          standalone: name
+        }
       }
     };
   });
@@ -188,7 +190,9 @@ module.exports = function (grunt) {
         dest: 'build/scripts/bundle.js',
         options: {
           debug:     DEV,
-          transform: browserifyTransform
+          browserifyOptions: {
+            transform: browserifyTransform
+          }
         }
       },
       embed: {
@@ -196,8 +200,10 @@ module.exports = function (grunt) {
         dest: 'build/scripts/embed.js',
         options: {
           debug:      DEV,
-          transform:  browserifyTransform,
-          standalone: 'Notebook'
+          browserifyOptions: {
+            transform:  browserifyTransform,
+            standalone: 'Notebook'
+          }
         }
       },
       test: {
@@ -205,7 +211,9 @@ module.exports = function (grunt) {
         dest: TEST_DIR + '/scripts/bundle.js',
         options: {
           debug:     DEV,
-          transform: browserifyTransform
+          browserifyOptions: {
+            transform: browserifyTransform
+          }
         }
       }
     }, browserifyPlugins),

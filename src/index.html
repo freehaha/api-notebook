@@ -15,6 +15,7 @@
       // Generate a regular notebook with all the injected plugins.
       new Notebook(document.body, {
         inject: [
+          'plugins/html-display.js',
           'plugins/proxy.js',
           'plugins/gist-persistence.js',
           'plugins/filter-properties.js',
@@ -23,6 +24,7 @@
           'plugins/function-property-filter.js'
         ],
         exec: [
+          'App.middleware.register(htmlDisplayPlugin);',
           'App.middleware.register(proxyPlugin);',
           'App.middleware.register(gistPersistencePlugin);',
           'App.middleware.register(filterPropertiesPlugin);',

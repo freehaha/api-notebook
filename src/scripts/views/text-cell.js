@@ -7,6 +7,7 @@ var EditorCell   = require('./editor-cell');
 var config       = require('../state/config');
 var messages     = require('../state/messages');
 var embedProtect = require('./lib/embed-protect');
+var apibaseStorage = require('../lib/apibase-annotator-storage');
 var annotator    = App.Library.annotator;
 
 // Remove the html class prefix output.
@@ -177,7 +178,7 @@ TextCell.prototype.renderEditor = function () {
       var id = App.config.get('id');
       app.include(annotator.ui.main, {element: this.markdownElement});
       // app.include(annotator.storage.debug);
-      app.include(annotator.storage.apibase, {
+      app.include(apibaseStorage, {
           host: 'http://johnsd.cse.unsw.edu.au:3000',
           viewId: this.cid,
           nId: id

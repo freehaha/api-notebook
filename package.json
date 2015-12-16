@@ -21,6 +21,8 @@
     "es6-collections": "0.2.0",
     "foreach": "2.0.4",
     "highlight.js": "8.1.0",
+    "jquery": "^2.1.4",
+    "js-cache": "^1.0.2",
     "kamino": "git://github.com/tildeio/kamino.js#v0.0.2",
     "load-script": "0.0.2",
     "marked": "0.3.0",

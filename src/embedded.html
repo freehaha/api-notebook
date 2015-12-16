@@ -24,17 +24,21 @@
 
       new Notebook(document.body, {
         inject: [
+          'plugins/html-display.js',
           'plugins/proxy.js',
           'plugins/gist-persistence.js',
           'plugins/filter-properties.js',
           'plugins/raml-client-generator.js',
+          'plugins/browser-request.js',
           'plugins/function-property-filter.js'
         ],
         exec: [
+          'App.middleware.register(htmlDisplayPlugin);',
           'App.middleware.register(proxyPlugin);',
           'App.middleware.register(gistPersistencePlugin);',
           'App.middleware.register(filterPropertiesPlugin);',
           'App.middleware.register(ramlClientGeneratorPlugin);',
+          'App.middleware.register(browserRequestPlugin);',
           'App.middleware.register(functionPropertyFilterPlugin);'
         ].join('\n'),
         className: 'notebook'

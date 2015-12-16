@@ -1,3 +1,4 @@
+/* global App */
 var _            = require('underscore');
 var marked       = require('marked');
 var domify       = require('domify');
@@ -6,6 +7,7 @@ var EditorCell   = require('./editor-cell');
 var config       = require('../state/config');
 var messages     = require('../state/messages');
 var embedProtect = require('./lib/embed-protect');
+var annotator    = App.Library.annotator;
 
 // Remove the html class prefix output.
 highlight.configure({ classPrefix: '' });
@@ -120,6 +122,10 @@ TextCell.prototype.setValue = function (value) {
  */
 TextCell.prototype.removeEditor = function () {
   if (this.markdownElement && this.markdownElement.parentNode) {
+    if(this.aApp) {
+      this.aApp.destroy();
+      delete this.aApp;
+    }
     this.markdownElement.parentNode.removeChild(this.markdownElement);
     delete this.markdownElement;
   }
@@ -165,6 +171,22 @@ TextCell.prototype.renderEditor = function () {
     langPrefix: 'lang-'
   }, _.bind(function (err, html) {
     this.markdownElement.innerHTML = html;
+    var isEmbedded      = !!config.get('embedded');
+    if(isEmbedded) {
+      var app = this.aApp = new annotator.App();
+      var id = App.config.get('id');
+      app.include(annotator.ui.main, {element: this.markdownElement});
+      // app.include(annotator.storage.debug);
+      app.include(annotator.storage.apibase, {
+          host: 'http://johnsd.cse.unsw.edu.au:3000',
+          viewId: this.cid,
+          nId: id
+      });
+      app.start().then(function() {
+        console.log('loading annotations...', app);
+        app.annotations.load({});
+      });
+    }
   }, this));
 
   messages.trigger('resize');

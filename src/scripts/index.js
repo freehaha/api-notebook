@@ -15,7 +15,8 @@ App.Library = {
   marked:     require('marked'),
   Backbone:   require('backbone'),
   DOMBars:    require('./lib/dombars'),
-  changeCase: require('change-case')
+  changeCase: require('change-case'),
+  annotator:  require('annotator')
 };
 
 App._        = App.Library._ = require('underscore');

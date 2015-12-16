@@ -31,6 +31,7 @@
     "underscore": "1.6.0"
   },
   "devDependencies": {
+    "annotator": "^1.2.2",
     "brfs": "~0.2.1",
     "browser-request": "^0.3.3",
     "browserify": "^12.0.1",

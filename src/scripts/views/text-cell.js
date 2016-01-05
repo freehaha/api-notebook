@@ -9,6 +9,8 @@ var messages     = require('../state/messages');
 var embedProtect = require('./lib/embed-protect');
 var apibaseStorage = require('../lib/apibase-annotator-storage');
 var annotator    = App.Library.annotator;
+var annotatorUI = require('../lib/annotator-ui');
+var annotations = require('../state/annotations');
 
 // Remove the html class prefix output.
 highlight.configure({ classPrefix: '' });
@@ -176,8 +178,17 @@ TextCell.prototype.renderEditor = function () {
     if(isEmbedded) {
       var app = this.aApp = new annotator.App();
       var id = App.config.get('id');
-      app.include(annotator.ui.main, {element: this.markdownElement});
-      // app.include(annotator.storage.debug);
+      app.include(annotatorUI, {
+          element: this.markdownElement,
+          onShowAnnotation: function(anns) {
+            annotations.showOnly(anns);
+            messages.trigger('comment:show', anns);
+            return true;
+          },
+          viewerExtensions: [
+            annotator.ui.markdown.viewerExtension
+          ]
+      });
       app.include(apibaseStorage, {
           host: 'http://johnsd.cse.unsw.edu.au:3000',
           viewId: this.cid,

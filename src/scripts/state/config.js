@@ -22,6 +22,7 @@ var config = module.exports = new Backbone.Model({
   header:         true,
   footer:         false,
   sidebar:        true,
+  commentbar:     true,
   savable:        true,
   embedded:       false,
   cloneable:      true,
@@ -62,6 +63,7 @@ config.listenTo(config, 'change:embedded', bounce(function () {
     footer:       isEmbedded,
     header:       !isEmbedded,
     sidebar:      !isEmbedded && canAuthenticate,
+    commentbar:   isEmbedded,
     savable:      !isEmbedded && canAuthenticate,
     textReadOnly: !isEmbedded
   });

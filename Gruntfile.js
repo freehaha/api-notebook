@@ -265,13 +265,22 @@ module.exports = function (grunt) {
         files: ['<%= jshint.all.src %>'],
         tasks: ['newer:jshint:all']
       },
-      scripts: {
-        files: ['src/**/*.{hbs,js}'],
-        tasks: ['browserify']
-      },
+      // scripts: {
+      //   files: ['src#<{(||)}>#*.{hbs,js}'],
+      //   tasks: ['browserify']
+      // },
       styles: {
         files: ['src/**/*.styl'],
         tasks: ['stylus']
+      }
+    },
+    concurrent: {
+      watch: {
+        tasks: '<%= cblist %>',
+        options: {
+          limit: 20,
+          logConcurrentOutput: true
+        }
       }
     }
   });
@@ -300,8 +309,34 @@ module.exports = function (grunt) {
     'jshint:all'
   ]);
 
+  grunt.registerTask('cbrowserify', function(target) {
+    grunt.config('browserify.options.keepAlive', true);
+    grunt.config('browserify.options.watch', true);
+    grunt.config('browserify.options.watchifyOptions', {
+        poll: 1000
+    });
+    grunt.task.run(['browserify:' + target]);
+  });
+
+  grunt.registerTask('serve', function() {
+    var bOption = grunt.config('browserify');
+    var keys = Object.getOwnPropertyNames(bOption);
+    var tasks = ['watch'];
+    for(var i = 0; i < keys.length; ++i) {
+      if(keys[i].indexOf('Plugin') > 0) {
+        continue;
+      }
+      tasks.push('cbrowserify:' + keys[i]);
+    }
+    grunt.config('cblist', tasks);
+    grunt.task.run(
+      ['concurrent:watch']
+    );
+  });
   // Build the application and watch for file changes.
-  grunt.registerTask('default', [
-    'build', 'connect:server', 'watch'
-  ]);
+  grunt.registerTask('default', function() {
+    grunt.task.run([
+        'build', 'connect:server', 'serve'
+    ]);
+  });
 };

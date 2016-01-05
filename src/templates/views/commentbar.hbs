@@ -1,0 +1,49 @@
+<div class="commentbar-toggle">
+  <i class="icon"></i>
+</div>
+
+<div class="commentbar-content">
+  <div class="commentbar-user">
+    {{#if @persistence.userId}}
+      <i class="commentbar-user-icon icon-folder-open-empty"></i>
+    {{/if}}
+    <div class="commentbar-user-title" title="{{@persistence.userTitle}}">
+      {{#if @persistence.userId}}
+        {{@persistence.userTitle}}
+      {{else}}
+        Unauthenticated
+      {{/if}}
+
+      <p class="commentbar-authenticate text-small persistence-{{#if @persistence.userId}}un{{/if}}authenticate">
+        <a href="#">
+          {{#if @persistence.userId}}
+            {{@config.unauthenticateText}}
+          {{else}}
+            {{@config.authenticateText}}
+          {{/if}}
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div class="commentbar-list">
+    {{#if @data.updating}}
+      <div class="list-item commentbar-updating text-center">
+        <i class="icon-arrows-cw animate-spin"></i>
+      </div>
+    {{else}}
+      {{#collection @annotations}}
+        <div class="list-item item" data-load="{{id}}">
+          <i class="icon-cancel-circled" data-delete="{{id}}"></i>
+
+          <div class="item-description">
+            <div class="item-title">
+              {{text}}
+            </div>
+          </div>
+        </div>
+      {{/collection}}
+    {{/if}}
+  </div>
+</div>
+

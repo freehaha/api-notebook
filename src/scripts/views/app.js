@@ -4,6 +4,7 @@ var Backbone = require('backbone');
 
 var View         = require('./template');
 var Sidebar      = require('./sidebar');
+var Commentbar   = require('./commentbar');
 var Notebook     = require('./notebook');
 var EditNotebook = require('./edit-notebook');
 var bounce       = require('../lib/bounce');
@@ -76,6 +77,9 @@ App.prototype.initialize = function () {
 
   // Set a sidebar instance to render.
   this.data.set('sidebar', new Sidebar());
+
+  // Add a comment bar
+  this.data.set('commentbar', new Commentbar());
 
   /**
    * Block attempts to close the window when the persistence state is dirty.

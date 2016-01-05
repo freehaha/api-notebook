@@ -16,6 +16,8 @@ require('codemirror/mode/clike/clike');
 require('codemirror/mode/htmlmixed/htmlmixed');
 require('codemirror/mode/javascript/javascript');
 
+
+global.showdown = require('showdown');
 // Bootstrap core functionality.
 require('./dom');
 require('./plugins');

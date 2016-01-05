@@ -1,12 +1,12 @@
 module.exports = {
   application: {
-    url:           'http://localhost:3000',
+    url:           'http://notebook.freehaha.org',
     title:         'API Notebook',
     oauthCallback: '/authenticate/oauth.html'
   },
   pkg: require('../package.json'),
   embed: {
-    script: 'http://localhost:3000/scripts/embed.js'
+    script: 'http://notebook.freehaha.org/scripts/embed.js'
   },
   plugins: {}
-}
+};

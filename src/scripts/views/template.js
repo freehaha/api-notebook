@@ -4,6 +4,7 @@ var View = require('./view');
 var state       = require('../state/state');
 var config      = require('../state/config');
 var persistence = require('../state/persistence');
+var annotations = require('../state/annotations');
 
 /**
  * Create a new view instance that uses the DOMBars templating engine.
@@ -34,7 +35,8 @@ TemplateView.prototype.render = function () {
       data:        this.data,
       state:       state,
       config:      config,
-      persistence: persistence
+      persistence: persistence,
+      annotations: annotations
     },
     helpers: this.helpers
   });

@@ -62,6 +62,10 @@
       <a href="http://mulesoft.com" class="ir powered-by-logo">MuleSoft</a>
     {{/unless}}
   </div>
+
+  {{#if @config.commentbar}}
+    {{{view @data.commentbar}}}
+  {{/if}}
 </div>
 
 {{#if @state.loading}}

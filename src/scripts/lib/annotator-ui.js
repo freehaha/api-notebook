@@ -267,6 +267,7 @@ function main(options) {
                 app.annotations.update(ann);
             },
             onDelete: function (ann) {
+                console.debug('delete', ann);
                 app.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
@@ -278,6 +279,13 @@ function main(options) {
             autoViewHighlights: options.element,
             onShowAnnotation: options.onShowAnnotation,
             extensions: options.viewerExtensions
+        });
+
+        annotations.on('remove', function(ann) {
+          app.annotations['delete']({
+              id: ann.id,
+              viewId: ann.get('viewId')
+          });
         });
         s.viewer.attach();
 
@@ -298,8 +306,7 @@ function main(options) {
 
         annotationsLoaded: function (anns) {
           s.highlighter.drawAll(anns);
-          console.debug('set');
-          annotations.set(anns);
+          annotations.add(anns);
           annotations.trigger('loaded');
         },
         annotationCreated: function (ann) {

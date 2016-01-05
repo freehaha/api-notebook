@@ -1,5 +1,6 @@
 var View        = require('./template');
 var $ = require('jquery');
+var annotations = require('../state/annotations');
 
 var CommentView = module.exports = View.extend({
   tagName: 'div',
@@ -25,7 +26,9 @@ CommentView.prototype.startEdit = function() {
 };
 
 CommentView.prototype.deleteId = function() {
+  //TODO: confirm
   console.debug('delete', this.model.id);
+  annotations.remove(this.model.id);
 };
 
 CommentView.prototype.initialize = function() {

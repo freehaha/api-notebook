@@ -36,8 +36,9 @@ CommentbarView.prototype.initialize = function () {
       this.render();
     });
   });
-  this.listenTo(annotations, 'remove', function() {
+  this.listenTo(annotations, 'remove', function(ann) {
     console.debug('remove');
+    this.data.get('views').remove(ann.id);
     this.render();
   });
   this.data.set('views', new CommentViewItems());

@@ -24,6 +24,7 @@ APIBaseStorage.prototype._getUrl = function(endpoint, annotation) {
 
 APIBaseStorage.prototype.create = function(annotation) {
   var url = this._getUrl('/resource', annotation);
+  var self = this;
   var data = $.extend(true, {}, annotation, {
     resourceType: 'NotebookAnnotation',
     nId: this.nId,
@@ -41,6 +42,7 @@ APIBaseStorage.prototype.create = function(annotation) {
   var d = $.Deferred();
   req.then(function(ret){
     annotation.id = ret.id;
+    annotation.viewId = self.viewId;
     d.resolve(annotation);
     console.debug('result', ret);
   }, function(err){
@@ -51,7 +53,10 @@ APIBaseStorage.prototype.create = function(annotation) {
 };
 
 APIBaseStorage.prototype['delete'] = function(annotation) {
-  console.log('delete', annotation);
+  console.debug('delete', annotation);
+  if(annotation.viewId !== this.viewId) {
+    return true;
+  }
   var url = this._getUrl('/{id}', annotation);
   var d = $.Deferred();
   var req = this._request(url, {
@@ -101,7 +106,6 @@ APIBaseStorage.prototype.query = function() {
       return item.viewId === self.viewId;
     });
     d.resolve({results: anns, meta: {total: anns.length}});
-    console.debug('result', ret);
   }, function(err){
     d.reject(err);
     console.debug('err', err);

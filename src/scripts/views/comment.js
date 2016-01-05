@@ -62,7 +62,11 @@ CommentView.prototype.template = require('../../templates/views/comment.hbs');
 // };
 
 CommentView.prototype.setComment = function (comment) {
-  this.model.set(comment);
+  if(comment instanceof Backbone.Model) {
+    this.model.set(comment.attributes);
+  } else {
+    this.model.set(comment);
+  }
 };
 
 

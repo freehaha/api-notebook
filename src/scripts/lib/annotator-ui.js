@@ -282,10 +282,7 @@ function main(options) {
         });
 
         annotations.on('remove', function(ann) {
-          app.annotations['delete']({
-              id: ann.id,
-              viewId: ann.get('viewId')
-          });
+          app.annotations['delete'](ann.toJSON());
         });
         s.viewer.attach();
 

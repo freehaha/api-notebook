@@ -28,11 +28,8 @@ var CommentbarView = module.exports = View.extend({
  */
 CommentbarView.prototype.initialize = function () {
   View.prototype.initialize.apply(this, arguments);
-  this.listenTo(annotations, 'loaded', function() {
+  this.listenTo(annotations, 'add', function() {
     this.render();
-    this.listenTo(annotations, 'add', function() {
-      this.render();
-    });
   });
   this.listenTo(annotations, 'remove', function(ann) {
     console.debug('remove');

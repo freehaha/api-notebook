@@ -126,7 +126,7 @@ CommentbarView.prototype.render = function () {
   this.el.innerHTML = CommentbarView.template;
 
   self.$el = $(self.el);
-  var eUl = self.$el.find('ul:first').empty();
+  var eUl = self.$el.find('div.comment-listing:first').empty();
   views.each(function(view) {
     view.get('view').appendTo(eUl[0]);
   });
@@ -135,7 +135,7 @@ CommentbarView.prototype.render = function () {
 
 CommentbarView.template = [
   '<div class="comment-outer comment-viewer">',
-  '  <ul class="comment-widget comment-listing"></ul>',
+  '  <div class="comment-widget comment-listing"></div>',
   '</div>'
 ].join('\n');
 

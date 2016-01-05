@@ -2,35 +2,48 @@ var View        = require('./template');
 var $ = require('jquery');
 
 var CommentView = module.exports = View.extend({
-  tagName: 'li',
-  className: 'notebook-comment',
+  tagName: 'div',
+  className: 'notebook-comment item',
   events: {
-    'click .comment-edit': 'edit'
+    'click [data-edit]': function() {
+      this.startEdit();
+    },
+    'click [data-delete]': function(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      this.deleteId();
+    }
   }
 });
 
 CommentView.prototype.close = function() {
-  this.stopListenind();
+  this.stopListening();
 };
 
-CommentView.prototype.edit = function(e) {
-  e.stopImmediatePropagation();
-  console.debug('edit', e, this.model.id);
+CommentView.prototype.startEdit = function() {
+  console.debug('edit', this.model.id);
+};
+
+CommentView.prototype.deleteId = function() {
+  console.debug('delete', this.model.id);
 };
 
 CommentView.prototype.initialize = function() {
   View.prototype.initialize.apply(this, arguments);
-  this.listenTo(this.model, 'change', function() {
-    console.debug('view model change');
-    this.render();
+  this.listenTo(this.model, 'change:show', function() {
+    if(this.model.get('show')) {
+      this.$el.removeClass('item-hide');
+      this.$el.addClass('item-active');
+    } else {
+      // this.$el.addClass('item-hide');
+      this.$el.removeClass('item-active');
+    }
   });
 };
 
 CommentView.prototype.render = function() {
-  console.debug(this.model.attributes);
   View.prototype.render.call(this);
   this.$el = $(this.el);
-  console.debug('render', this.model.get('text'), this.model.get('show'));
   if(this.model.get('show')) {
     this.$el.removeClass('item-hide');
   } else {

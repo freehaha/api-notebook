@@ -42,7 +42,7 @@
   overflow: ellipsis
   margin-left: 1.7em
 
-.commentbar-list
+.comment-listing
   position: absolute
   top: 50px
   left: 0
@@ -67,12 +67,19 @@
       border-bottom: none
     &:hover
       background-color: rgba(0,0,0,0.02)
+    .icon-doc
+      float: right
+      display: none
+      margin-top: 5px
+      cursor: pointer
     .icon-cancel-circled
       float: right
       display: none
       margin-top: 5px
       cursor: pointer
     &:hover .icon-cancel-circled
+      display: block
+    &:hover .icon-doc
       display: block
   .commentbar-updating
     padding: 1em
@@ -133,5 +140,5 @@
 .comment-link
   display: none;
 
-.notebook-commentbar .comment-viewer li.item-hide
+.notebook-commentbar .comment-viewer .item-hide
   display:none

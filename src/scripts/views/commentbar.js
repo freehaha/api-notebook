@@ -6,9 +6,7 @@ var config      = require('../state/config');
 var middleware  = require('../state/middleware');
 var persistence = require('../state/persistence');
 var annotations = require('../state/annotations');
-var util = require('annotator/src/util');
 var Backbone = require('backbone');
-var $ = util.$;
 
 
 var CommentViewItem = Backbone.Model.extend({
@@ -126,7 +124,6 @@ CommentbarView.prototype.render = function () {
   console.log('render CommentbarView');
   this.el.innerHTML = CommentbarView.template;
 
-  self.$el = $(self.el);
   var eUl = self.$el.find('div.comment-listing:first').empty();
   views.each(function(view) {
     view.get('view').appendTo(eUl[0]);

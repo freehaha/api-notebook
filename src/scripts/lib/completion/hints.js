@@ -75,7 +75,8 @@ var Hints = module.exports = function (widget, results) {
   });
 
   Backbone.$(hints)
-    .on('click', 'li', function (e, target) {
+    .on('click', 'li', function (e) {
+      var target = e.currentTarget;
       if (isNaN(target.hintId)) {
         return;
       }

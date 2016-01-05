@@ -41,8 +41,8 @@ SidebarView.prototype.events = {
 
     this.deleteId(e.target.getAttribute('data-delete'));
   },
-  'click [data-load]': function (e, target) {
-    var id = target.getAttribute('data-load');
+  'click [data-load]': function (e) {
+    var id = e.currentTarget.getAttribute('data-load');
 
     // If the current notebook has not been saved yet, prompt the user.
     if (!persistence.isCurrentSaved()) {

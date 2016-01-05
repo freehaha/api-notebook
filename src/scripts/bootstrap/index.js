@@ -1,6 +1,6 @@
 // Shim Backbone with the functionality from Backbone.native
 var Backbone = require('backbone');
-Backbone.$   = require('backbone.native');
+Backbone.$   = require('jquery');
 
 // ES6 Feature Shim.
 require('es6-collections');

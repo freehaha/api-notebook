@@ -1,6 +1,6 @@
 var View        = require('./template');
-var $ = require('jquery');
 var annotations = require('../state/annotations');
+var Backbone    = require('backbone');
 
 var CommentView = module.exports = View.extend({
   tagName: 'div',
@@ -46,7 +46,6 @@ CommentView.prototype.initialize = function() {
 
 CommentView.prototype.render = function() {
   View.prototype.render.call(this);
-  this.$el = $(this.el);
   if(this.model.get('show')) {
     this.$el.removeClass('item-hide');
   } else {

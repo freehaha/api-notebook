@@ -3,13 +3,15 @@
 var util = require('annotator/src/util');
 var annotator = App.Library.annotator;
 var adder = annotator.ui.adder;
-var editor = annotator.ui.editor;
 var highlighter = annotator.ui.highlighter;
 var textselector = annotator.ui.textselector;
 var viewer = annotator.ui.viewer;
 var annotations = require('../state/annotations');
-
-var _t = util.gettext;
+var messages = require('../state/messages');
+var Annotation = require('../models/annotation');
+var Promise = util.Promise;
+var Backbone = require('backbone');
+var _ = require('underscore');
 
 var AnnViewer = viewer.Viewer.extend({
     constructor: function(options) {
@@ -108,76 +110,6 @@ function removeDynamicStyle() {
 }
 
 
-// Helper function to add permissions checkboxes to the editor
-function addPermissionsCheckboxes(editor, ident, authz) {
-    function createLoadCallback(action) {
-        return function loadCallback(field, annotation) {
-            field = util.$(field).show();
-
-            var u = ident.who();
-            var input = field.find('input');
-
-            // Do not show field if no user is set
-            if (typeof u === 'undefined' || u === null) {
-                field.hide();
-            }
-
-            // Do not show field if current user is not admin.
-            if (!(authz.permits('admin', annotation, u))) {
-                field.hide();
-            }
-
-            // See if we can authorise without a user.
-            if (authz.permits(action, annotation, null)) {
-                input.attr('checked', 'checked');
-            } else {
-                input.removeAttr('checked');
-            }
-        };
-    }
-
-    function createSubmitCallback(action) {
-        return function submitCallback(field, annotation) {
-            var u = ident.who();
-
-            // Don't do anything if no user is set
-            if (typeof u === 'undefined' || u === null) {
-                return;
-            }
-
-            if (!annotation.permissions) {
-                annotation.permissions = {};
-            }
-            if (util.$(field).find('input').is(':checked')) {
-                delete annotation.permissions[action];
-            } else {
-                // While the permissions model allows for more complex entries
-                // than this, our UI presents a checkbox, so we can only
-                // interpret "prevent others from viewing" as meaning "allow
-                // only me to view". This may want changing in the future.
-                annotation.permissions[action] = [
-                    authz.authorizedUserId(u)
-                ];
-            }
-        };
-    }
-
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>view</strong> this annotation'),
-        load: createLoadCallback('read'),
-        submit: createSubmitCallback('read')
-    });
-
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>edit</strong> this annotation'),
-        load: createLoadCallback('update'),
-        submit: createSubmitCallback('update')
-    });
-}
-
-
 /**
  * function:: main([options])
  *
@@ -223,13 +155,17 @@ function main(options) {
 
     // Object to hold local state
     var s = {
-        interactionPoint: null
+        interactionPoint: null,
+        events: _.extend({}, Backbone.Events)
     };
 
     function start(app) {
         var ident = app.registry.getUtility('identityPolicy');
         var authz = app.registry.getUtility('authorizationPolicy');
 
+        messages.on('attach:editor', function(editor) {
+          s.editor = editor;
+        });
         s.adder = new adder.Adder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
@@ -237,12 +173,7 @@ function main(options) {
         });
         s.adder.attach();
 
-        s.editor = new editor.Editor({
-            extensions: options.editorExtensions
-        });
-        s.editor.attach();
-
-        addPermissionsCheckboxes(s.editor, ident, authz);
+        // addPermissionsCheckboxes(s.editor, ident, authz);
 
         s.highlighter = new highlighter.Highlighter(options.element);
 
@@ -284,6 +215,9 @@ function main(options) {
         annotations.on('remove', function(ann) {
           app.annotations['delete'](ann.toJSON());
         });
+        annotations.on('save', function(ann) {
+          app.annotations.update(ann.toJSON());
+        });
         s.viewer.attach();
 
         injectDynamicStyle();
@@ -294,7 +228,6 @@ function main(options) {
 
         destroy: function () {
             s.adder.destroy();
-            s.editor.destroy();
             s.highlighter.destroy();
             s.textselector.destroy();
             s.viewer.destroy();
@@ -320,16 +253,41 @@ function main(options) {
         },
 
         beforeAnnotationCreated: function (annotation) {
-            // Editor#load returns a promise that is resolved if editing
-            // completes, and rejected if editing is cancelled. We return it
-            // here to "stall" the annotation process until the editing is
-            // done.
-            return s.editor.load(annotation, s.interactionPoint);
+          var ann = new Annotation(annotation);
+          ann.set('new', true);
+          if(!s.editor) {
+            /* probe for editor */
+            s.events.listenToOnce(messages, 'attach:editor', function(editor) {
+              console.debug('got editor!');
+              s.editor = editor;
+              editor.setModel(ann);
+            });
+            /* FIXME: might have some race conditions? */
+            messages.trigger('probe:editor');
+          } else {
+            s.editor.setModel(ann);
+          }
+          s.events.listenTo(ann, 'change:text', function(ann) {
+            _.extend(annotation, ann.attributes);
+          });
+          var p = new Promise(function(resolve, reject) {
+            s.events.listenToOnce(ann, 'save', function(){
+              resolve();
+            });
+            s.events.listenToOnce(ann, 'cancel', function(){
+              reject();
+            });
+          });
+          p.catch().then(function() {
+            console.log('removing listeners...');
+            s.events.stopListening(ann);
+          });
+          return p;
         },
 
-        beforeAnnotationUpdated: function (annotation) {
-            return s.editor.load(annotation, s.interactionPoint);
-        }
+        // beforeAnnotationUpdated: function (annotation) {
+        //     return s.editor.load(annotation, s.interactionPoint);
+        // }
     };
 }
 

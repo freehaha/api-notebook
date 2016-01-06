@@ -1,6 +1,7 @@
 var View        = require('./template');
 var annotations = require('../state/annotations');
 var Backbone    = require('backbone');
+var showdown    = require('showdown');
 
 var CommentView = module.exports = View.extend({
   tagName: 'div',
@@ -22,7 +23,7 @@ CommentView.prototype.close = function() {
 };
 
 CommentView.prototype.startEdit = function() {
-  console.debug('edit', this.model.id);
+  this.editor.setModel(this.model);
 };
 
 CommentView.prototype.deleteId = function() {
@@ -31,8 +32,18 @@ CommentView.prototype.deleteId = function() {
   annotations.remove(this.model.id);
 };
 
-CommentView.prototype.initialize = function() {
+CommentView.prototype.updateText = function() {
+  var converter = new showdown.Converter();
+  this.$el.find('span.comment-text')
+    .html(converter.makeHtml(this.model.get('text')));
+};
+
+CommentView.prototype.initialize = function(options) {
+  this.editor = options.editor;
   View.prototype.initialize.apply(this, arguments);
+  this.listenTo(this.model, 'change:text', function() {
+    this.updateText();
+  });
   this.listenTo(this.model, 'change:show', function() {
     if(this.model.get('show')) {
       this.$el.removeClass('item-hide');
@@ -51,6 +62,7 @@ CommentView.prototype.render = function() {
   } else {
     this.$el.addClass('item-hide');
   }
+  this.updateText();
   return this;
 };
 

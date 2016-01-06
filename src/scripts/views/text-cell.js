@@ -183,7 +183,7 @@ TextCell.prototype.renderEditor = function () {
           onShowAnnotation: function(anns) {
             annotations.showOnly(anns);
             messages.trigger('comment:show', anns);
-            return true;
+            return false;
           },
           viewerExtensions: [
             annotator.ui.markdown.viewerExtension

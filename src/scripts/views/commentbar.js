@@ -2,10 +2,12 @@ var _           = require('underscore');
 // var View        = require('./template');
 var View        = require('./view');
 var CommentView = require('./comment');
+var CommentEditorView = require('./comment-editor');
 var config      = require('../state/config');
 var middleware  = require('../state/middleware');
 var persistence = require('../state/persistence');
 var annotations = require('../state/annotations');
+var Annotation  = require('../models/annotation');
 var Backbone = require('backbone');
 
 
@@ -28,6 +30,11 @@ var CommentbarView = module.exports = View.extend({
  */
 CommentbarView.prototype.initialize = function () {
   View.prototype.initialize.apply(this, arguments);
+  var editor = new CommentEditorView({
+    model: new Annotation()
+  });
+  editor.render();
+  this.editor = editor;
   this.listenTo(annotations, 'add', function() {
     this.render();
   });
@@ -100,7 +107,8 @@ CommentbarView.prototype.renderChildren = function() {
     } else {
       view = new CommentView({
         id: comment.id,
-        model: comment
+        model: comment,
+        editor: this.editor
       });
       views.add({
           id: comment.id,
@@ -108,7 +116,7 @@ CommentbarView.prototype.renderChildren = function() {
       });
       view.render();
     }
-  });
+  }, this);
 };
 /**
  * Override the render function to load the initial notebook list.
@@ -125,6 +133,7 @@ CommentbarView.prototype.render = function () {
   views.each(function(view) {
     view.get('view').appendTo(eUl[0]);
   });
+  this.editor.appendTo(eUl[0]);
   return this;
 };
 

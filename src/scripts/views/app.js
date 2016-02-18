@@ -54,8 +54,9 @@ App.prototype.events = {
   'click .notebook-share':  'shareNotebook',
   'click .toggle-notebook': 'toggleView',
   'click .notebook-new':    'newNotebook',
-  'keyup .notebook-title': function (e, el) {
+  'keyup .notebook-title': function (e) {
     var meta = persistence.get('notebook').get('meta');
+    var el = e.currentTarget;
 
     // Update the title on keypress.
     meta[el.value ? 'set' : 'unset']('title', el.value);

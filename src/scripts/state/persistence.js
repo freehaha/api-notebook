@@ -417,11 +417,14 @@ Persistence.prototype.clone = function (done) {
 
   var model = this.get('notebook').clone();
 
+  var id = model.get('id');
+  // set the meta
   // Set the notebook instance in the state.
   model.unset('id');
   model.unset('ownerId');
   model.unset('ownerTitle');
   model.set('meta', model.get('meta').clone());
+  model.get('meta').set('cloneId', id);
 
   middleware.trigger(
     'persistence:clone',

@@ -236,6 +236,35 @@ var loadPlugin = function (data, next, done) {
   });
 };
 
+var forkAndSavePlugin = function (data, next, done) {
+  App.middleware.trigger('ajax:oauth2', {
+      url:    'https://api.github.com/gists/' + data.meta.cloneId + '/forks',
+      proxy:  false,
+      method: 'POST',
+      oauth2: oauth2Store.toJSON()
+  }, function (err, xhr) {
+    if (err) { return next(err); }
+
+    // The status does not equal a sucessful patch or creation.
+    if (xhr.status !== 200 && xhr.status !== 201) {
+      return next(new Error('Request failed'));
+    }
+
+    try {
+      var content = JSON.parse(xhr.responseText);
+      data.id         = content.id;
+      data.ownerId    = content.owner.id;
+      data.ownerTitle = content.owner.login;
+    } catch (e) {
+      return next(e);
+    }
+    // then save
+    delete data.meta.cloneId;
+    savePlugin(data, next, done);
+    return;
+  });
+};
+
 /**
  * Save the notebook into a single Github gist for persistence. If the user is
  * not yet authenticated, we'll attempt to do a smoother on boarding by showing
@@ -252,6 +281,12 @@ var savePlugin = function (data, next, done) {
 
       return done(), data.save();
     });
+  }
+
+  // if it's a clone, fork first then save
+  if(!data.id && data.meta.cloneId) {
+    forkAndSavePlugin(data, next, done);
+    return;
   }
 
   App.middleware.trigger('ajax:oauth2', {

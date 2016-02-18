@@ -9,6 +9,7 @@ var viewer = annotator.ui.viewer;
 var annotations = require('../state/annotations');
 var messages = require('../state/messages');
 var Annotation = require('../models/annotation');
+var middleware = require('../state/middleware');
 var Promise = util.Promise;
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -213,9 +214,24 @@ function main(options) {
         });
 
         annotations.on('remove', function(ann) {
-          app.annotations['delete'](ann.toJSON());
+          ann = ann.toJSON();
+          if(!authz.permits('delete', ann, ident.who())) {
+            middleware.trigger('ui:notify', {
+              title: 'Not enough permission',
+              message: 'not enough permission to delete this comment'
+            });
+            return;
+          }
+          app.annotations['delete'](ann);
         });
         annotations.on('save', function(ann) {
+          if(!authz.permits('delete', ann, ident.who())) {
+            middleware.trigger('ui:notify', {
+              title: 'Not enough permission',
+              message: 'not enough permission to edit this comment'
+            });
+            return;
+          }
           app.annotations.update(ann.toJSON());
         });
         s.viewer.attach();

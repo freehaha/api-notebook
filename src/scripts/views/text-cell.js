@@ -10,6 +10,7 @@ var embedProtect = require('./lib/embed-protect');
 var apibaseStorage = require('../lib/apibase-annotator-storage');
 var annotator    = App.Library.annotator;
 var annotatorUI = require('../lib/annotator-ui');
+var annotatorIdentity = require('../lib/annotator-identity');
 var annotations = require('../state/annotations');
 
 // Remove the html class prefix output.
@@ -178,6 +179,8 @@ TextCell.prototype.renderEditor = function () {
     if(isEmbedded) {
       var app = this.aApp = new annotator.App();
       var id = App.config.get('id');
+      app.include(annotatorIdentity.simple);
+      app.include(annotator.authz.acl);
       app.include(annotatorUI, {
           element: this.markdownElement,
           onShowAnnotation: function(anns) {
@@ -195,7 +198,6 @@ TextCell.prototype.renderEditor = function () {
           nId: id
       });
       app.start().then(function() {
-        console.log('loading annotations...', app);
         app.annotations.load({});
       });
     }

@@ -2,7 +2,11 @@
   <a href="#"
       title="View as webpage"
       class="comment-link">View as webpage</a>
+
+{{#equal @persistence.userId user}}
   <i class="icon-cancel-circled" data-delete="{{id}}"></i>
   <i class="icon-doc" data-edit="{{id}}"></i>
+{{/equal}}
 </span>
 <span class="comment-text"></span>
+<span class="user">commented by {{userTitle}}</span>

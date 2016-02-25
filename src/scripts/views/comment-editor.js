@@ -5,6 +5,7 @@ var messages    = require('../state/messages');
 
 var CommentEditorView = module.exports = View.extend({
     tagName: 'div',
+    className: 'comment-outer comment-editor hide',
     events: {
       'click .comment-cancel': function(e) {
         e.preventDefault();

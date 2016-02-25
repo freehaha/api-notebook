@@ -28,11 +28,21 @@ CommentEditorView.defaultOptions = {
   ]
 };
 
+CommentEditorView.prototype.hide = function() {
+  this.$el.addClass('hide');
+};
+
+CommentEditorView.prototype.show = function() {
+  this.$el.removeClass('hide');
+  this.$el.addClass('showing');
+};
+
 CommentEditorView.prototype.setModel = function(model){
   this._removeModelListeners();
   this.model = model;
   this._showFieldValues();
   this._addModelListeners();
+  this.show();
 };
 
 CommentEditorView.prototype._showFieldValues = function() {
@@ -53,6 +63,7 @@ CommentEditorView.prototype._removeModelListeners = function() {
 
 CommentEditorView.prototype.cancel = function() {
   this.model.trigger('cancel', this.model);
+  this.hide();
 };
 
 CommentEditorView.prototype.save = function() {
@@ -60,6 +71,7 @@ CommentEditorView.prototype.save = function() {
     this.model.set(field.name, field.input.val());
   }, this);
   this.model.trigger('save', this.model);
+  this.hide();
 };
 
 CommentEditorView.prototype.initialize = function(options) {
@@ -92,14 +104,12 @@ CommentEditorView.prototype.render = function() {
 };
 
 CommentEditorView.template = [
-    '<div class="comment-outer comment-editor">',
-    '  <form class="comment-widget">',
-    '    <ul class="comment-listing"></ul>',
-    '    <div class="comment-controls">',
-    '     <a href="" class="comment-cancel">Cancel</a>',
-    '      <a href=""',
-    '         class="comment-save comment-focus">Save</a>',
-    '    </div>',
-    '  </form>',
-    '</div>'
+    '<form class="comment-widget">',
+    '  <ul class="comment-listing"></ul>',
+    '  <div class="comment-controls">',
+    '    <a href=""',
+    '       class="comment-save comment-focus">Save</a>',
+    '   <a href="" class="comment-cancel">Cancel</a>',
+    '  </div>',
+    '</form>',
 ].join('\n');

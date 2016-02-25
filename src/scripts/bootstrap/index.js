@@ -1,5 +1,6 @@
 // Shim Backbone with the functionality from Backbone.native
 var Backbone = require('backbone');
+// Backbone.$   = require('jquery');
 Backbone.$   = require('jquery');
 
 // ES6 Feature Shim.

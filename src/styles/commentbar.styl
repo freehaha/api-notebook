@@ -135,11 +135,35 @@ ul.comment-listing
 
 
 .comment-link
-  display: none;
+  display: none
 
 .notebook-commentbar .comment-viewer .item-hide
-  display:none
+  display: none
 
 .notebook-commentbar .comment-viewer span.user
   font-size: 0.8em
   color: #ddd
+
+div.comment-editor
+  padding-top: 15px
+  padding-right: 20px
+
+  textarea
+    min-height: 120px
+    width: 100%
+
+  div.comment-controls
+    padding-left: 30px
+
+div.comment-editor.hide
+  display: none
+
+div.comment-editor.showing
+  animation-name: showing
+  animation-duration: 0.5s
+  animation-timing-function: ease-out
+
+@keyframes showing {
+    from {background-color: yellow;}
+    to {background-color: white;}
+}
